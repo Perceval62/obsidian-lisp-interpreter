@@ -33,31 +33,32 @@ const DEFAULT_SETTINGS: MyPluginSettings = {
 	mySetting: 'default'
 }
 
-function executeLisp(source: string) {
-
-	const itrp = new Interpreter(); // Create interpreter.
-	const ret = itrp.eval(source);
-	return toJS(ret);
-}
-
 export default class MyPlugin extends Plugin {
 	settings: MyPluginSettings;
 
+	itrp = new Interpreter(); // Create interpreter.
+
 	async onload() {
 		await this.loadSettings();
-		this.registerMarkdownCodeBlockProcessor("lisp", (source, el, ctx) => {
+		this.registerMarkdownCodeBlockProcessor("lisp-run", (source, el, ctx) => {
 			try {
 				new Notice("Running some lisp code ...");
 				const og_el = el.createEl("pre");
 				og_el.textContent = source;
 
 				const result_el = el.createDiv().createEl("code");
-				const lisp_result = executeLisp(source);
+				const lisp_result = this.executeLisp(source);
 				result_el.textContent = `Lisp Evaluation => ${lisp_result}`;
 			} catch (error) {
 				new Notice(error);
 			}
 		});
+	}
+
+	executeLisp(source: string) {
+
+		const ret = this.itrp.eval(source);
+		return toJS(ret);
 	}
 
 	onunload() {
