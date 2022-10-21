@@ -40,7 +40,7 @@ export default class MyPlugin extends Plugin {
 
 	async onload() {
 		await this.loadSettings();
-		this.registerMarkdownCodeBlockProcessor("lisp-run", (source, el, ctx) => {
+		this.registerMarkdownCodeBlockProcessor("scheme", (source, el, ctx) => {
 			try {
 				new Notice("Running some lisp code ...");
 				const og_el = el.createEl("pre");
